@@ -5,6 +5,7 @@ import { getTodosAction } from "../actions/todo-actions";
 import { TodoCard } from "@/components/todo-card";
 import { authClient } from "@/lib/auth-client";
 import { CreateTodoDialog } from "@/components/create-todo-dialog";
+import Link from "next/link";
 
 type ExtendedUser = {
   id: string;
@@ -27,7 +28,18 @@ export default function Dashboard() {
   const user = session?.user as ExtendedUser | undefined;
 
   if (isPending) return <div>Loading session...</div>;
-  if (!user) return <div>Please login to continue.</div>;
+  if (!user)
+    return (
+      <div className="flex justify-center h-screen items-center gap-x-2">
+        Please login to continue.
+        <Link
+          href="/sign-in"
+          className="px-6 py-2 text-primary hover:underline font-medium bg-blue-400 rounded-2xl"
+        >
+          Sign In
+        </Link>
+      </div>
+    );
 
   return (
     <div className="container mx-auto p-6">
