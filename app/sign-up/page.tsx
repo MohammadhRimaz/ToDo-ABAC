@@ -10,7 +10,6 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function SignUp() {
@@ -19,28 +18,30 @@ export default function SignUp() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const { error: signUpError } = await authClient.signUp.email({
-      email,
-      password,
-      name,
-      callbackURL: "/dashboard",
-    });
-
-    if (signUpError) {
-      setError(
-        signUpError.message || "Email is already taken. Please, sign in..."
-      );
-    } else {
-      router.push("/dashboard");
-    }
-    setLoading(false);
+    await authClient.signUp.email(
+      {
+        email,
+        password,
+        name,
+        callbackURL: "/dashboard", // Better-auth redirects for you
+      },
+      {
+        // Use the internal hooks for cleaner error handling
+        onError: (ctx) => {
+          setError(ctx.error.message || "Something went wrong");
+          setLoading(false);
+        },
+        onResponse: () => {
+          setLoading(false);
+        },
+      }
+    );
   };
 
   return (
@@ -54,8 +55,9 @@ export default function SignUp() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Name</label>
               <Input
-                type="name"
-                placeholder="Name"
+                type="text"
+                placeholder="John Doe"
+                value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
@@ -64,7 +66,8 @@ export default function SignUp() {
               <label className="text-sm font-medium">Email</label>
               <Input
                 type="email"
-                placeholder="Email"
+                placeholder="name@example.com"
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
@@ -83,11 +86,10 @@ export default function SignUp() {
               <p className="text-sm text-red-500 font-medium">{error}</p>
             )}
             <Button className="w-full" type="submit" disabled={loading}>
-              {loading ? "Registering..." : "Sign Un"}
+              {loading ? "Registering..." : "Sign Up"}
             </Button>
           </form>
         </CardContent>
-
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
@@ -95,7 +97,7 @@ export default function SignUp() {
               href="/sign-in"
               className="text-primary hover:underline font-medium"
             >
-              Sign Ip
+              Sign In
             </Link>
           </p>
         </CardFooter>

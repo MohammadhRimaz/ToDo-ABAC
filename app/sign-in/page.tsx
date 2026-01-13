@@ -10,7 +10,6 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function SignIn() {
@@ -18,25 +17,26 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const { error: signInError } = await authClient.signIn.email({
-      email,
-      password,
-      callbackURL: "/dashboard",
-    });
-
-    if (signInError) {
-      setError(signInError.message || "Invalid email or password");
-    } else {
-      router.push("/dashboard");
-    }
-    setLoading(false);
+    await authClient.signIn.email(
+      {
+        email,
+        password,
+        callbackURL: "/dashboard", // Better-auth handles the redirect automatically
+      },
+      {
+        // Use client callbacks for better state management
+        onError: (ctx) => {
+          setError(ctx.error.message || "Invalid email or password");
+          setLoading(false);
+        },
+      }
+    );
   };
 
   return (
@@ -50,8 +50,11 @@ export default function SignIn() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Email</label>
               <Input
-                placeholder="Email"
+                type="email"
+                placeholder="name@example.com"
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </div>
             <div className="space-y-2">
