@@ -17,8 +17,9 @@ This project was built for the Intern Software Engineer take-home test. The core
 
 ## ✨ Key Features & ABAC Logic
 
-The application enforces a strict permission matrix as defined in the technical requirements:
+The application enforces a strict permission matrix as defined in the technical requirements:  
 |Role | View Todos | Create | Update | Delete |
+|---|---|---|---|---|
 |User |Own Only | Yes | Yes | Drafts Only |
 |Manager | All | No | No | No |
 |Admin | All | No | No | Any |
