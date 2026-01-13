@@ -6,6 +6,9 @@ import { TodoCard } from "@/components/todo-card";
 import { authClient } from "@/lib/auth-client";
 import { CreateTodoDialog } from "@/components/create-todo-dialog";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 type ExtendedUser = {
   id: string;
@@ -15,6 +18,8 @@ type ExtendedUser = {
 };
 
 export default function Dashboard() {
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { data: session, isPending } = authClient.useSession();
 
   const { data: todos, isLoading } = useQuery({
@@ -23,6 +28,24 @@ export default function Dashboard() {
     // Only run the query if we have a session
     enabled: !!session,
   });
+
+  const handleLogut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onRequest: () => {
+          setIsLoggingOut(true); // Set loading to true when request starts
+        },
+        onSuccess: () => {
+          router.push("/sign-in"); // Redirect after logout
+          router.refresh(); // Clear server-side cache
+        },
+        onError: () => {
+          setIsLoggingOut(false); // Reset if something goes wrong
+          alert("Failed to logout");
+        },
+      },
+    });
+  };
 
   // Cast the user to our extended type
   const user = session?.user as ExtendedUser | undefined;
@@ -49,8 +72,19 @@ export default function Dashboard() {
           <p className="text-muted-foreground">Logged in as: {user.role}</p>
         </div>
 
-        {/* ABAC Enforcement: Only 'user' can see the Create button  */}
-        {user.role === "user" && <CreateTodoDialog />}
+        <div className="flex items-center gap-4">
+          {/* ABAC Enforcement: Only 'user' can see the Create button  */}
+          {user.role === "user" && <CreateTodoDialog />}
+
+          <Button
+            variant="outline"
+            onClick={handleLogut}
+            disabled={isLoggingOut}
+            className="cursor-pointer bg-black text-white disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            Logout
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (

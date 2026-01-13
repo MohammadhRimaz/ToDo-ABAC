@@ -11,6 +11,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -18,6 +19,7 @@ export default function SignUp() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +34,11 @@ export default function SignUp() {
         callbackURL: "/dashboard", // Better-auth redirects for you
       },
       {
+        onSuccess: () => {
+          // 3. Manually redirect on successful signup
+          router.push("/dashboard");
+          router.refresh();
+        },
         // Use the internal hooks for cleaner error handling
         onError: (ctx) => {
           setError(ctx.error.message || "Something went wrong");
@@ -85,7 +92,11 @@ export default function SignUp() {
             {error && (
               <p className="text-sm text-red-500 font-medium">{error}</p>
             )}
-            <Button className="w-full" type="submit" disabled={loading}>
+            <Button
+              className="w-full cursor-pointer"
+              type="submit"
+              disabled={loading}
+            >
               {loading ? "Registering..." : "Sign Up"}
             </Button>
           </form>

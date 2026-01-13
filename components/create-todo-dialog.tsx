@@ -12,7 +12,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 
 export function CreateTodoDialog() {
@@ -40,7 +39,10 @@ export function CreateTodoDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button
+          variant="outline"
+          className="cursor-pointer  bg-black text-white"
+        >
           <Plus className="w-4 h-4 mr-2" /> New Todo
         </Button>
       </DialogTrigger>
@@ -61,7 +63,8 @@ export function CreateTodoDialog() {
           </div>
           <Button
             type="submit"
-            className="w-full"
+            variant="outline"
+            className="w-full cursor-pointer bg-black text-white"
             disabled={mutation.isPending}
           >
             {mutation.isPending ? "Creating..." : "Create Todo"}

@@ -70,7 +70,11 @@ export default function SignIn() {
             {error && (
               <p className="text-sm text-red-500 font-medium">{error}</p>
             )}
-            <Button className="w-full" type="submit" disabled={loading}>
+            <Button
+              className="w-full cursor-pointer"
+              type="submit"
+              disabled={loading}
+            >
               {loading ? "Signing In..." : "Sign In"}
             </Button>
           </form>

@@ -68,7 +68,7 @@ export function TodoCard({
               onValueChange={(value) => updateMutation.mutate(value)}
               disabled={updateMutation.isPending}
             >
-              <SelectTrigger className="w-35 h-8">
+              <SelectTrigger className="w-35 h-8 cursor-pointer">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -88,6 +88,7 @@ export function TodoCard({
               size="sm"
               onClick={() => deleteMutation.mutate()}
               disabled={deleteMutation.isPending}
+              className="cursor-pointer"
             >
               <Trash2 className="w-4 h-4 mr-1" /> Delete
             </Button>
