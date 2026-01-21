@@ -29,7 +29,7 @@ export default function Dashboard() {
     enabled: !!session,
   });
 
-  const handleLogut = async () => {
+  const handleLogout = async () => {
     await authClient.signOut({
       fetchOptions: {
         onRequest: () => {
@@ -78,7 +78,7 @@ export default function Dashboard() {
 
           <Button
             variant="outline"
-            onClick={handleLogut}
+            onClick={handleLogout}
             disabled={isLoggingOut}
             className="cursor-pointer bg-black text-white disabled:opacity-70 disabled:cursor-not-allowed"
           >
