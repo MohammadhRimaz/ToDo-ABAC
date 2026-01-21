@@ -33,7 +33,7 @@ The application enforces a strict permission matrix as defined in the technical 
 1. Clone the repository:
 
 ```bash
-clone https://github.com/your-username/your-repo-name.git
+clone https://github.com/MohammadhRimaz/ToDo-ABAC.git
 cd your-repo-name
 ```
 
