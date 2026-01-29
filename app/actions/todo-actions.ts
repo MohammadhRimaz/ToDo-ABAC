@@ -52,7 +52,7 @@ export async function updateTodoAction(
     title: string;
     description: string;
     status: "draft" | "in_progress" | "completed";
-  }>
+  }>,
 ) {
   const user = await getAuthenticatedUser();
   const existingTodo = await db.query.todo.findFirst({

@@ -21,6 +21,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { data: session, isPending } = authClient.useSession();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { data: todos, isLoading } = useQuery({
     queryKey: ["todos"],
@@ -28,6 +29,10 @@ export default function Dashboard() {
     // Only run the query if we have a session
     enabled: !!session,
   });
+
+  const filteredTodos = todos?.filter((todo) =>
+    todo.title.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   const handleLogout = async () => {
     await authClient.signOut({
@@ -73,6 +78,14 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-4">
+          <input
+            type="text"
+            value={searchTerm}
+            className="w-full p-2 border rounded-md"
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search tasks..."
+          />
+
           {/* ABAC Enforcement: Only 'user' can see the Create button  */}
           {user.role === "user" && <CreateTodoDialog />}
 
@@ -91,7 +104,7 @@ export default function Dashboard() {
         <div>Loading todos...</div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {todos?.map((todo) => (
+          {filteredTodos?.map((todo) => (
             <TodoCard key={todo.id} todo={todo as any} currentUser={user} />
           ))}
           {todos?.length === 0 && (

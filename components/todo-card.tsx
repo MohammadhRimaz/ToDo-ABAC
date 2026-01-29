@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { updateTodoAction } from "@/app/actions/todo-actions";
-import { Trash2 } from "lucide-react";
+import { Trash2, CheckCircle2, Clock, FileEdit } from "lucide-react";
 
 export type User = InferSelectModel<typeof user>;
 export type Todo = InferSelectModel<typeof todo>;
@@ -48,11 +48,36 @@ export function TodoCard({
   // ABAC Check for UI: Should we even show the delete button?
   const canDelete = checkPermission(currentUser, "delete", todo);
 
+  // Define a mapping for styles based on status
+  const statusConfig = {
+    completed: {
+      border: "border-green-500 bg-green-50 text-green-700",
+      icon: <CheckCircle2 className="w-4 h-4 text-green-500" />,
+    },
+    in_progress: {
+      border: "border-yellow-500 bg-yellow-50 text-yellow-700",
+      icon: <Clock className="w-4 h-4 text-yellow-500" />,
+    },
+    draft: {
+      border: "border-gray-300 bg-gray-50 text-gray-600",
+      icon: <FileEdit className="w-4 h-4 text-slate-400" />,
+    },
+  };
+
+  const { border, icon } = statusConfig[todo.status] || statusConfig.draft;
+
   return (
-    <Card className="w-full">
+    <Card className={`w-full border-2 transition-colors ${border}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-md font-bold">{todo.title}</CardTitle>
-        <Badge variant={todo.status === "completed" ? "default" : "secondary"}>
+        <div className="flex items-center gap-2">
+          {icon}
+          <CardTitle className="text-md font-bold">{todo.title}</CardTitle>
+        </div>
+
+        <Badge
+          className="capitalize"
+          variant={todo.status === "completed" ? "default" : "secondary"}
+        >
           {todo.status.replace("_", " ")}
         </Badge>
       </CardHeader>
